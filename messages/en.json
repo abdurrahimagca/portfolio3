@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "title": "Abdurrahim Agca - Portfolio",
+    "description": "Personal portfolio of Abdurrahim Agca - Full stack developer"
+  },
+  "nav": {
+    "home": "Home",
+    "blog": "Blog"
+  },
+  "hero": {
+    "name": "Abdurrahim Agca",
+    "tagline": "I do stuff.",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "email": "Email",
+    "downloadCv": "Download CV",
+    "or": "OR",
+    "setMeeting": "Set A Meeting"
+  },
+  "services": {
+    "title": "Services",
+    "items": [
+      {
+        "title": "Frontend Development",
+        "description": "Responsive and accessible user interfaces built with modern technologies such as Next.js, React, Vue.js and Tailwind CSS.",
+        "icon": "code"
+      },
+      {
+        "title": "Mobile Development",
+        "description": "Cross-platform mobile applications built with React Native and Expo.",
+        "icon": "smartphone"
+      },
+      {
+        "title": "Backend Development",
+        "description": "Backend applications built with modern technologies such as GO, NestJS including SQL databases.",
+        "icon": "server"
+      },
+      {
+        "title": "CI/CD and Deployment",
+        "description": "CI/CD pipelines and deployment strategies for web and mobile applications using GitHub Actions, Docker, Self-hosted runners, Internal VPNs and more.",
+        "icon": "settings"
+      }
+    ]
+  },
+  "experiences": {
+    "title": "Experience",
+    "items": [
+      {
+        "role": "Mobile & Backend Developer",
+        "company": "Togodo",
+        "period": "Nov 2025 – Feb 2026",
+        "description": "Developed cross-platform mobile applications and scalable backend APIs using Flutter and NestJS. Re-architected storage infrastructure by migrating from local file mounting to object storage buckets, improving data scalability. Optimized CI/CD workflows by implementing new Jenkins build steps and establishing distinct environments for staging and testing. Refactored authentication modules to resolve critical stability issues and enhance security. Role concluded due to the cessation of company operations."
+      },
+      {
+        "role": "Freelance Full Stack Developer",
+        "company": "Freelance",
+        "period": "Nov 2024 – Present",
+        "description": "Delivered complete web solutions handling frontend, backend, database design, and deployment. Built custom event management platforms with integrated APIs and automation. Implemented CI/CD pipelines and testing for continuous delivery."
+      },
+      {
+        "role": "Full Stack Development Intern",
+        "company": "Code and More",
+        "period": "Jul 2024 – Sep 2024",
+        "description": "Developed CMS modules using C# and .NET to improve workflow efficiency. Integrated Microsoft Translator API for multilingual content generation."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Projects",
+    "items": [
+       {
+        "title": "Stashly",
+        "description": "Mobile application for a Germany based startup. Built with React Native, Expo and GO & PSQL & AWS S3. Still in development.",
+        "tags": ["React Native", "Expo", "GO", "PSQL", "AWS S3"],
+        "links": []
+      },
+      {
+        "title": "Polivagal Akademi",
+        "description": "Learning platform using no-code infrastructure and Next.js application for payment, custom event management including newsletter management.",
+        "tags": ["Next.js", "done"],
+        "links": [
+          {
+            "href": "https://polivagalakademi.com",
+            "label": "Visit",
+            "icon": "link"
+          }
+        ]
+      },
+      {
+        "title": "East West Travel",
+        "description": "Travel agency website built with Next.js, Strapi for CMS and Shopware for e-commerce. Stopped for now due to customer request but preview is available.",
+        "tags": ["Next.js", "Strapi", "Shopware"],
+        "links": [
+          {
+            "href": "https://su.abdurrahimagca.website/ewt-preview",
+            "label": "Preview",
+            "icon": "link"
+          }
+        ]
+      }
+     
+    ]
+  },
+  "blog": {
+    "title": "Blog",
+    "searchPlaceholder": "Search posts...",
+    "noResults": "No posts found.",
+    "backToBlog": "Back to Blog",
+    "allTopics": "All"
+  }
+}

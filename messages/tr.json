@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "title": "Abdurrahim Ağca - Portföy",
+    "description": "Abdurrahim Ağca kişisel portföyü - Full stack geliştirici"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "blog": "Blog"
+  },
+  "hero": {
+    "name": "Abdurrahim Ağca",
+    "tagline": "İşler yaparım.",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "email": "E-posta",
+    "downloadCv": "CV İndir",
+    "or": "VEYA",
+    "setMeeting": "Randevu Al"
+  },
+  "services": {
+    "title": "Hizmetler",
+    "items": [
+      {
+        "title": "Frontend Geliştirme",
+        "description": "Next.js, React, Vue.js ve Tailwind CSS gibi modern teknolojilerle oluşturulmuş duyarlı ve erişilebilir kullanıcı arayüzleri.",
+        "icon": "code"
+      },
+      {
+        "title": "Mobil Geliştirme",
+        "description": "React Native ve Expo ile oluşturulmuş çapraz platform mobil uygulamalar.",
+        "icon": "smartphone"
+      },
+      {
+        "title": "Backend Geliştirme",
+        "description": "GO, NestJS ve SQL veritabanları gibi modern teknolojilerle oluşturulmuş backend uygulamaları.",
+        "icon": "server"
+      },
+      {
+        "title": "CI/CD ve Dağıtım",
+        "description": "GitHub Actions, Docker, Self-hosted runner'lar, dahili VPN'ler ve daha fazlasını kullanarak web ve mobil uygulamalar için CI/CD iş akışları ve dağıtım stratejileri.",
+        "icon": "settings"
+      }
+    ]
+  },
+  "experiences": {
+    "title": "Deneyim",
+    "items": [
+      {
+        "role": "Mobil & Backend Geliştirici",
+        "company": "Togodo",
+        "period": "Kas 2025 – Şub 2026",
+        "description": "Flutter ve NestJS kullanarak çapraz platform mobil uygulamalar ve ölçeklenebilir backend API'leri geliştirdi. Yerel dosya bağlamadan nesne depolama kovalarına geçiş yaparak depolama altyapısını yeniden tasarladı ve veri ölçeklenebilirliğini artırdı. Yeni Jenkins derleme adımları uygulayarak ve hazırlık ile test için ayrı ortamlar oluşturarak CI/CD iş akışlarını optimize etti. Kritik kararlılık sorunlarını çözmek ve güvenliği artırmak için kimlik doğrulama modüllerini yeniden yapılandırdı. Şirket faaliyetlerinin sona ermesi nedeniyle görev sona erdi."
+      },
+      {
+        "role": "Serbest Full Stack Geliştirici",
+        "company": "Serbest",
+        "period": "Kas 2024 – Günümüz",
+        "description": "Frontend, backend, veritabanı tasarımı ve dağıtım dahil eksiksiz web çözümleri sundu. Entegre API'ler ve otomasyon ile özel etkinlik yönetim platformları oluşturdu. Sürekli teslimat için CI/CD iş akışları ve test süreçleri uyguladı."
+      },
+      {
+        "role": "Full Stack Geliştirme Stajyeri",
+        "company": "Code and More",
+        "period": "Tem 2024 – Eyl 2024",
+        "description": "İş akışı verimliliğini artırmak için C# ve .NET kullanarak CMS modülleri geliştirdi. Çok dilli içerik üretimi için Microsoft Translator API'sini entegre etti."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Projeler",
+    "items": [
+      {
+        "title": "Stashly",
+        "description": "Almanya merkezli bir startup için mobil uygulama. React Native, Expo ve GO & PSQL & AWS S3 ile oluşturuldu. Hala geliştirme aşamasında.",
+        "tags": ["React Native", "Expo", "GO", "PSQL", "AWS S3"],
+        "links": []
+      },
+      {
+        "title": "Polivagal Akademi",
+        "description": "No-code altyapısı ve ödeme, özel etkinlik yönetimi ve bülten yönetimi için Next.js uygulaması kullanan öğrenme platformu.",
+        "tags": ["Next.js", "tamamlandı"],
+        "links": [
+          {
+            "href": "https://polivagalakademi.com",
+            "label": "Ziyaret Et",
+            "icon": "link"
+          }
+        ]
+      },
+      {
+        "title": "East West Travel",
+        "description": "Next.js, CMS için Strapi ve e-ticaret için Shopware ile oluşturulmuş seyahat acentesi web sitesi. Müşteri talebi nedeniyle şimdilik durduruldu ancak önizleme mevcuttur.",
+        "tags": ["Next.js", "Strapi", "Shopware"],
+        "links": [
+          {
+            "href": "https://su.abdurrahimagca.website/ewt-preview",
+            "label": "Önizleme",
+            "icon": "link"
+          }
+        ]
+      }
+    ]
+  },
+  "blog": {
+    "title": "Blog",
+    "searchPlaceholder": "Yazı ara...",
+    "noResults": "Yazı bulunamadı.",
+    "backToBlog": "Bloga Dön",
+    "allTopics": "Tümü"
+  }
+}
