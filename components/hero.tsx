@@ -1,6 +1,7 @@
 "use client";
 
-import { H1, H2, Lead } from "./text";
+import { useState } from "react";
+import { H1, Lead } from "./text";
 import { Button } from "./ui/button";
 import {
   DownloadIcon,
@@ -11,8 +12,11 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link as NextLink } from "@/i18n/routing";
+import { TurnstileMeetingDialog } from "./turnstile-meeting-dialog";
+
 const HeroComponent = () => {
   const t = useTranslations("hero");
+  const [meetingDialogOpen, setMeetingDialogOpen] = useState(false);
 
   return (
     <div className="w-full flex flex-col items-center justify-center p-sq-1 bg-secondary/10">
@@ -57,14 +61,17 @@ const HeroComponent = () => {
         <Button
           size="lg"
           className="p-sq-1-2 w-full"
-          data-cal-link="agcaabdurrahim/client-meeting"
-          data-cal-namespace="client-meeting"
-          data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+          onClick={() => setMeetingDialogOpen(true)}
         >
           <Plus className="w-4 h-4" />
-         <span className="text-lg">{t("setMeeting")}</span>
+          <span className="text-lg">{t("setMeeting")}</span>
         </Button>
       </div>
+
+      <TurnstileMeetingDialog
+        open={meetingDialogOpen}
+        onOpenChange={setMeetingDialogOpen}
+      />
     </div>
   );
 };
