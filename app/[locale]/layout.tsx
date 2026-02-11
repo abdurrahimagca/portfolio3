@@ -64,11 +64,6 @@ export default async function RootLayout({ children, params }: Props) {
           </div>
         </NextIntlClientProvider>
         <Script
-          id="turnstile"
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-          strategy="afterInteractive"
-        />
-        <Script
           id="cal-embed"
           strategy="lazyOnload"
           dangerouslySetInnerHTML={{

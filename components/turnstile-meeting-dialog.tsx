@@ -20,9 +20,8 @@ declare global {
       ) => string;
       remove: (widgetId: string) => void;
     };
-    Cal?: ((...args: unknown[]) => void) & {
-      ns?: Record<string, (...args: unknown[]) => void>;
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Cal?: any;
   }
 }
 
@@ -32,6 +31,71 @@ interface TurnstileMeetingDialogProps {
 }
 
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const TURNSTILE_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+// Module-level flag to prevent double-loading the script
+let scriptLoaded = false;
+let scriptLoading = false;
+const loadCallbacks: (() => void)[] = [];
+
+function loadTurnstileScript(): Promise<void> {
+  return new Promise(resolve => {
+    if (
+      scriptLoaded &&
+      window.turnstile &&
+      typeof window.turnstile.render === "function"
+    ) {
+      resolve();
+      return;
+    }
+
+    if (scriptLoading) {
+      loadCallbacks.push(resolve);
+      return;
+    }
+
+    const existing = document.querySelector(
+      `script[src^="https://challenges.cloudflare.com/turnstile"]`
+    );
+    if (existing) {
+      scriptLoading = true;
+      const poll = setInterval(() => {
+        if (window.turnstile && typeof window.turnstile.render === "function") {
+          clearInterval(poll);
+          scriptLoaded = true;
+          scriptLoading = false;
+          resolve();
+          loadCallbacks.forEach(cb => cb());
+          loadCallbacks.length = 0;
+        }
+      }, 100);
+      return;
+    }
+
+    scriptLoading = true;
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SRC;
+    script.async = true;
+    script.onload = () => {
+      const poll = setInterval(() => {
+        if (window.turnstile && typeof window.turnstile.render === "function") {
+          clearInterval(poll);
+          scriptLoaded = true;
+          scriptLoading = false;
+          resolve();
+          loadCallbacks.forEach(cb => cb());
+          loadCallbacks.length = 0;
+        }
+      }, 50);
+    };
+    script.onerror = () => {
+      scriptLoading = false;
+      resolve();
+    };
+    document.head.appendChild(script);
+  });
+}
 
 export function TurnstileMeetingDialog({
   open,
@@ -42,10 +106,28 @@ export function TurnstileMeetingDialog({
   const [status, setStatus] = useState<
     "loading" | "ready" | "verified" | "error"
   >("loading");
+  const [errorDetail, setErrorDetail] = useState<string>("");
+
+  function openCalModal() {
+    const cal = window.Cal;
+    if (cal && cal.ns && typeof cal.ns["client-meeting"] === "function") {
+      cal.ns["client-meeting"]("modal", {
+        calLink: "agcaabdurrahim/client-meeting",
+        config: { layout: "month_view" },
+      });
+    } else if (cal && typeof cal === "function") {
+      cal("init", "client-meeting", {
+        origin: "https://cal.abdurrahimagca.website",
+      });
+      cal.ns["client-meeting"]("modal", {
+        calLink: "agcaabdurrahim/client-meeting",
+        config: { layout: "month_view" },
+      });
+    }
+  }
 
   useEffect(() => {
     if (!open) {
-      // Clean up widget when dialog closes
       if (widgetIdRef.current !== null && window.turnstile) {
         try {
           window.turnstile.remove(widgetIdRef.current);
@@ -55,62 +137,59 @@ export function TurnstileMeetingDialog({
         widgetIdRef.current = null;
       }
       setStatus("loading");
+      setErrorDetail("");
       return;
     }
 
-    let attempts = 0;
-    const maxAttempts = 50; // 10 seconds max
+    let cancelled = false;
 
-    const poll = setInterval(() => {
-      attempts++;
+    loadTurnstileScript().then(() => {
+      if (cancelled) return;
 
-      if (attempts > maxAttempts) {
-        clearInterval(poll);
+      if (!window.turnstile || typeof window.turnstile.render !== "function") {
+        setErrorDetail("Turnstile script failed to initialize.");
         setStatus("error");
         return;
       }
 
-      // Need: turnstile API ready + container in DOM + not already rendered
-      if (
-        !window.turnstile ||
-        typeof window.turnstile.render !== "function" ||
-        !containerRef.current ||
-        widgetIdRef.current !== null
-      ) {
-        return;
-      }
+      requestAnimationFrame(() => {
+        if (cancelled || !containerRef.current) return;
 
-      clearInterval(poll);
-      setStatus("ready");
+        setStatus("ready");
 
-      try {
-        widgetIdRef.current = window.turnstile.render(containerRef.current, {
-          sitekey: SITE_KEY,
-          theme: "dark",
-          callback: () => {
-            setStatus("verified");
-            setTimeout(() => {
-              onOpenChange(false);
-              window.Cal?.ns?.["client-meeting"]?.("openModal", {
-                calLink: "agcaabdurrahim/client-meeting",
-                config: { layout: "month_view" },
-              });
-            }, 600);
-          },
-          "error-callback": () => {
-            setStatus("error");
-          },
-          "expired-callback": () => {
-            setStatus("error");
-          },
-        });
-      } catch {
-        setStatus("error");
-      }
-    }, 200);
+        try {
+          widgetIdRef.current = window.turnstile!.render(containerRef.current, {
+            sitekey: SITE_KEY,
+            theme: "dark",
+            callback: () => {
+              setStatus("verified");
+              const calOpener = openCalModal;
+              setTimeout(() => {
+                onOpenChange(false);
+                setTimeout(() => {
+                  calOpener();
+                }, 400);
+              }, 500);
+            },
+            "error-callback": (errorCode: string) => {
+              setErrorDetail(`Turnstile error: ${errorCode}`);
+              setStatus("error");
+            },
+            "expired-callback": () => {
+              setErrorDetail("Verification expired. Please try again.");
+              setStatus("error");
+            },
+          });
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          setErrorDetail(`Render error: ${msg}`);
+          setStatus("error");
+        }
+      });
+    });
 
     return () => {
-      clearInterval(poll);
+      cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
@@ -131,9 +210,16 @@ export function TurnstileMeetingDialog({
               Verified — opening calendar...
             </p>
           ) : status === "error" ? (
-            <p className="text-sm text-destructive">
-              Verification failed. Please close and try again.
-            </p>
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-sm text-destructive">
+                Verification failed. Please close and try again.
+              </p>
+              {errorDetail && (
+                <p className="text-xs text-muted-foreground font-mono break-all max-w-full">
+                  {errorDetail}
+                </p>
+              )}
+            </div>
           ) : (
             <div ref={containerRef} />
           )}
