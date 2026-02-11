@@ -20,7 +20,6 @@ declare global {
       ) => string;
       remove: (widgetId: string) => void;
     };
-    onTurnstileLoad?: () => void;
     Cal?: ((...args: unknown[]) => void) & {
       ns?: Record<string, (...args: unknown[]) => void>;
     };
@@ -40,71 +39,79 @@ export function TurnstileMeetingDialog({
 }: TurnstileMeetingDialogProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const [verified, setVerified] = useState(false);
+  const [status, setStatus] = useState<
+    "loading" | "ready" | "verified" | "error"
+  >("loading");
 
-  // Render turnstile when the dialog is open
   useEffect(() => {
-    if (!open) return;
-
-    // Reset state for fresh dialog open
-    setVerified(false);
-
-    const renderWidget = () => {
-      if (
-        !containerRef.current ||
-        widgetIdRef.current !== null ||
-        !window.turnstile?.render
-      )
-        return;
-
-      widgetIdRef.current = window.turnstile.render(containerRef.current, {
-        sitekey: SITE_KEY,
-        theme: "dark",
-        callback: () => {
-          setVerified(true);
-          setTimeout(() => {
-            onOpenChange(false);
-            window.Cal?.ns?.["client-meeting"]?.("openModal", {
-              calLink: "agcaabdurrahim/client-meeting",
-              config: { layout: "month_view" },
-            });
-          }, 600);
-        },
-      });
-    };
-
-    // If turnstile is already loaded, render immediately
-    if (window.turnstile?.render) {
-      // Small delay to ensure the AlertDialog portal has mounted the container
-      const timer = setTimeout(renderWidget, 100);
-      return () => {
-        clearTimeout(timer);
-        cleanup();
-      };
-    }
-
-    // Otherwise wait for the onload callback
-    const prevOnload = window.onTurnstileLoad;
-    window.onTurnstileLoad = () => {
-      prevOnload?.();
-      renderWidget();
-    };
-
-    return () => {
-      window.onTurnstileLoad = prevOnload;
-      cleanup();
-    };
-
-    function cleanup() {
+    if (!open) {
+      // Clean up widget when dialog closes
       if (widgetIdRef.current !== null && window.turnstile) {
         try {
           window.turnstile.remove(widgetIdRef.current);
         } catch {
-          // widget may already be removed
+          // ignore
         }
         widgetIdRef.current = null;
       }
+      setStatus("loading");
+      return;
     }
+
+    let attempts = 0;
+    const maxAttempts = 50; // 10 seconds max
+
+    const poll = setInterval(() => {
+      attempts++;
+
+      if (attempts > maxAttempts) {
+        clearInterval(poll);
+        setStatus("error");
+        return;
+      }
+
+      // Need: turnstile API ready + container in DOM + not already rendered
+      if (
+        !window.turnstile ||
+        typeof window.turnstile.render !== "function" ||
+        !containerRef.current ||
+        widgetIdRef.current !== null
+      ) {
+        return;
+      }
+
+      clearInterval(poll);
+      setStatus("ready");
+
+      try {
+        widgetIdRef.current = window.turnstile.render(containerRef.current, {
+          sitekey: SITE_KEY,
+          theme: "dark",
+          callback: () => {
+            setStatus("verified");
+            setTimeout(() => {
+              onOpenChange(false);
+              window.Cal?.ns?.["client-meeting"]?.("openModal", {
+                calLink: "agcaabdurrahim/client-meeting",
+                config: { layout: "month_view" },
+              });
+            }, 600);
+          },
+          "error-callback": () => {
+            setStatus("error");
+          },
+          "expired-callback": () => {
+            setStatus("error");
+          },
+        });
+      } catch {
+        setStatus("error");
+      }
+    }, 200);
+
+    return () => {
+      clearInterval(poll);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -118,10 +125,14 @@ export function TurnstileMeetingDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="flex justify-center py-4 min-h-[80px]">
-          {verified ? (
+        <div className="flex justify-center items-center py-4 min-h-[80px]">
+          {status === "verified" ? (
             <p className="text-sm text-green-500">
               Verified — opening calendar...
+            </p>
+          ) : status === "error" ? (
+            <p className="text-sm text-destructive">
+              Verification failed. Please close and try again.
             </p>
           ) : (
             <div ref={containerRef} />

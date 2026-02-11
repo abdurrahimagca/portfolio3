@@ -65,7 +65,7 @@ export default async function RootLayout({ children, params }: Props) {
         </NextIntlClientProvider>
         <Script
           id="turnstile"
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad"
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
           strategy="afterInteractive"
         />
         <Script
