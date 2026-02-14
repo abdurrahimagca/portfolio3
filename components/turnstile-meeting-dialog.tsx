@@ -20,8 +20,6 @@ declare global {
       ) => string;
       remove: (widgetId: string) => void;
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Cal?: any;
   }
 }
 
@@ -33,6 +31,8 @@ interface TurnstileMeetingDialogProps {
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 const TURNSTILE_SRC =
   "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const GOOGLE_CALENDAR_URL =
+  "https://calendar.google.com/calendar/appointments/schedules/AcZssZ3TqXDGPm2v-J1OCkH3e5iNxV8eGeTyv1r_VUjdKsowRhseoa91Cw7q-s-ZIY3MY9jC-lMeU9Ip?gv=true";
 
 // Module-level flag to prevent double-loading the script
 let scriptLoaded = false;
@@ -108,24 +108,6 @@ export function TurnstileMeetingDialog({
   >("loading");
   const [errorDetail, setErrorDetail] = useState<string>("");
 
-  function openCalModal() {
-    const cal = window.Cal;
-    if (cal && cal.ns && typeof cal.ns["client-meeting"] === "function") {
-      cal.ns["client-meeting"]("modal", {
-        calLink: "agcaabdurrahim/client-meeting",
-        config: { layout: "month_view" },
-      });
-    } else if (cal && typeof cal === "function") {
-      cal("init", "client-meeting", {
-        origin: "https://cal.abdurrahimagca.website",
-      });
-      cal.ns["client-meeting"]("modal", {
-        calLink: "agcaabdurrahim/client-meeting",
-        config: { layout: "month_view" },
-      });
-    }
-  }
-
   useEffect(() => {
     if (!open) {
       if (widgetIdRef.current !== null && window.turnstile) {
@@ -163,11 +145,10 @@ export function TurnstileMeetingDialog({
             theme: "dark",
             callback: () => {
               setStatus("verified");
-              const calOpener = openCalModal;
               setTimeout(() => {
                 onOpenChange(false);
                 setTimeout(() => {
-                  calOpener();
+                  window.open(GOOGLE_CALENDAR_URL, "_blank");
                 }, 400);
               }, 500);
             },
